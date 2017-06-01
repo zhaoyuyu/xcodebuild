@@ -5,16 +5,18 @@ echo "~~~~~~~~~~~~~~~~开始执行脚本~~~~~~~~~~~~~~~~"
 
 ####################################################################
 #工程名
-PROJECTNAME="xxxxxxx"
+PROJECTNAME="xxxxxx"
 #需要编译的 targetName
-TARGET_NAME="xxxxxxx"
+TARGET_NAME="xxxxxx"
 # ADHOC
 #证书名#描述文件
-DEVCODE_SIGN_IDENTITY="iPhone Developer: xxxxxxx"
-DEVPROVISIONING_PROFILE_NAME="xxxxxxx"
+DEVCODE_SIGN_IDENTITY="xxxxxx"
+DEVPROVISIONING_PROFILE_NAME="xxxxxx"
+DEVPROVISIONING_PROFILE_SPECIFIER="xxxxxx"
 
-ADHOCCODE_SIGN_IDENTITY="iPhone Distribution: xxxxxxx"
-ADHOCPROVISIONING_PROFILE_NAME="xxxxxxx"
+ADHOCCODE_SIGN_IDENTITY="iPhone Distribution: xxxxxx"
+ADHOCPROVISIONING_PROFILE_NAME="xxxxxx"
+ADHOCPROVISIONING_PROFILE_SPECIFIER="xxxxxx"
 
 #是否是工作空间
 ISWORKSPACE=false
@@ -25,7 +27,10 @@ CODE_SIGN_IDENTITY=${DEV_CODE_SIGN_IDENTITY}
 #描述文件
 PROVISIONING_PROFILE_NAME=${DEV_PROVISIONING_PROFILE_NAME}
 
+PROVISIONING_PROFILE_SPECIFIER=${DEVPROVISIONING_PROFILE_SPECIFIER}
+
 Deployment="development"
+
 
 echo "~~~~~~~~~~~~~~~~选择打包方式~~~~~~~~~~~~~~~~"
 echo "		1 Development (默认)"
@@ -44,11 +49,13 @@ then
 CODE_SIGN_IDENTITY=${DEVCODE_SIGN_IDENTITY}
 PROVISIONING_PROFILE_NAME=${DEVPROVISIONING_PROFILE_NAME}
 Deployment="development"
+PROVISIONING_PROFILE_SPECIFIER=${DEVPROVISIONING_PROFILE_SPECIFIER}
 elif [ "$method" = "2" ]
 then
 CODE_SIGN_IDENTITY=${ADHOCCODE_SIGN_IDENTITY}
 PROVISIONING_PROFILE_NAME=${ADHOCPROVISIONING_PROFILE_NAME}
 Deployment="ad-hoc"
+PROVISIONING_PROFILE_SPECIFIER=${ADHOCPROVISIONING_PROFILE_SPECIFIER}
 else
 echo "参数无效...."
 exit 1
@@ -62,7 +69,7 @@ fi
 beginTime=`date +%s`
 DATE=`date '+%Y-%m-%d-%T'`
 
-#编译模式 工程默认有 Debug Release 
+#编译模式 工程默认有 Debug Release
 CONFIGURATION_TARGET=Release
 #编译路径
 BUILDPATH=~/Desktop/${TARGET_NAME}_${DATE}
@@ -88,7 +95,8 @@ xcodebuild -verbose archive -workspace ${PROJECTNAME}.xcworkspace \
 -archivePath ${ARCHIVEPATH} \
 -configuration ${CONFIGURATION_TARGET} \
 CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}" \
-PROVISIONING_PROFILE="${PROVISIONING_PROFILE_NAME}" || exit
+PROVISIONING_PROFILE="${PROVISIONING_PROFILE_NAME}" \
+PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_SPECIFIER}" || exit
 else
 # 清理 避免出现一些莫名的错误
 xcodebuild clean -project ${PROJECTNAME}.xcodeproj \
@@ -101,7 +109,8 @@ xcodebuild -verbose archive -project ${PROJECTNAME}.xcodeproj \
 -archivePath ${ARCHIVEPATH} \
 -configuration ${CONFIGURATION_TARGET} \
 CODE_SIGN_IDENTITY="${CODE_SIGN_IDENTITY}" \
-PROVISIONING_PROFILE="${PROVISIONING_PROFILE_NAME}" || exit
+PROVISIONING_PROFILE="${PROVISIONING_PROFILE_NAME}" \
+PROVISIONING_PROFILE_SPECIFIER="${PROVISIONING_PROFILE_SPECIFIER}" || exit
 fi
 
 echo "~~~~~~~~~~~~~~~~检查是否构建成功~~~~~~~~~~~~~~~~~~~"
@@ -128,6 +137,8 @@ cat > $exportOptionsPlist <<EOD
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+<key>teamID</key>
+<string>XXXXXX</string>
 <key>method</key>
 <string>$Deployment</string>
 <key>compileBitcode</key>
